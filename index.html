@@ -48,7 +48,7 @@
         .input-section {
             display: flex;
             flex-direction: column;
-            gap: 15px; /* Memberi jarak lebih antar input */
+            gap: 15px;
             text-align: left;
         }
 
@@ -74,17 +74,6 @@
         .input-section input[type="text"]:focus {
             border-color: #018297;
             outline: none;
-        }
-
-        /* Styling untuk feedback nama file */
-        .file-input-wrapper {
-            position: relative;
-        }
-        #fileNameDisplay {
-            margin-top: 5px;
-            font-size: 12px;
-            color: #018297;
-            font-style: italic;
         }
 
         button {
@@ -122,9 +111,7 @@
         <div class="input-section">
             <div class="input-group">
                 <label for="photoUpload">1. Pilih Foto Terbaik Anda</label>
-                <div class="file-input-wrapper">
-                    <input type="file" id="photoUpload" accept="image/*">
-                    <div id="fileNameDisplay"></div> </div>
+                <input type="file" id="photoUpload" accept="image/*">
             </div>
             <div class="input-group">
                 <label for="inputName">2. Masukkan Nama Lengkap</label>
@@ -145,7 +132,6 @@
         const inputName = document.getElementById("inputName");
         const inputPosition = document.getElementById("inputPosition");
         const downloadBtn = document.getElementById("downloadBtn");
-        const fileNameDisplay = document.getElementById("fileNameDisplay");
 
         const baseImageSrc = 'TWIBBON MUKTAMAR.jpg'; 
         const baseImage = new Image();
@@ -153,6 +139,7 @@
         baseImage.src = baseImageSrc;
         let userPhoto = null;
 
+        // Koordinat dan pengaturan untuk gambar 1080x1350 piksel
         const FRAME_AREA = {
             startX: 457, startY: 692,
             width: 395, height: 448,
@@ -168,15 +155,22 @@
         };
 
         async function drawTwibbon() {
-            if (!baseImage.complete) {
+            if (!baseImage.complete || baseImage.naturalHeight === 0) {
                 await new Promise(resolve => baseImage.onload = resolve);
             }
             twibbonCanvas.width = baseImage.width;
             twibbonCanvas.height = baseImage.height;
 
-            // 1. Gambar foto pengguna jika ada
+            // --- URUTAN MENGGAMBAR YANG BENAR ---
+
+            // LANGKAH 1: Gambar template twibbon sebagai latar belakang.
+            ctx.drawImage(baseImage, 0, 0, twibbonCanvas.width, twibbonCanvas.height);
+
+            // LANGKAH 2: Gambar foto pengguna di atas template, di dalam area bingkai.
             if (userPhoto) {
-                ctx.save();
+                ctx.save(); // Simpan state canvas
+                
+                // Buat bentuk bingkai sebagai "clipping mask"
                 ctx.beginPath();
                 ctx.moveTo(FRAME_AREA.startX, FRAME_AREA.startY);
                 ctx.lineTo(FRAME_AREA.startX, FRAME_AREA.startY - FRAME_AREA.height + 50);
@@ -186,8 +180,9 @@
                 );
                 ctx.lineTo(FRAME_AREA.startX + FRAME_AREA.width, FRAME_AREA.startY);
                 ctx.closePath();
-                ctx.clip();
+                ctx.clip(); // Terapkan mask: gambar berikutnya hanya akan muncul di dalam bentuk ini.
 
+                // Logika untuk membuat foto "cover" di dalam bingkai
                 const photoAR = userPhoto.width / userPhoto.height;
                 const frameAR = FRAME_AREA.width / FRAME_AREA.height;
                 let sx = 0, sy = 0, sWidth = userPhoto.width, sHeight = userPhoto.height;
@@ -196,29 +191,20 @@
                 } else {
                     sHeight = sWidth / frameAR; sy = (userPhoto.height - sHeight) / 2;
                 }
+                
+                // Gambar foto pengguna yang sudah diatur ukurannya
                 ctx.drawImage(userPhoto, sx, sy, sWidth, sHeight, FRAME_AREA.startX, FRAME_AREA.startY - FRAME_AREA.height, FRAME_AREA.width, FRAME_AREA.height);
-                ctx.restore();
+                
+                ctx.restore(); // Hapus mask agar bisa menggambar normal lagi
             }
 
-            // 2. Gambar template twibbon
-            ctx.drawImage(baseImage, 0, 0, twibbonCanvas.width, twibbonCanvas.height);
+            // LANGKAH 3: Tulis teks nama dan keterangan di lapisan paling atas.
+            await document.fonts.ready; // Pastikan font sudah siap digunakan
 
-            // 3. TAMBAHAN: Gambar placeholder jika belum ada foto
-            if (!userPhoto) {
-                ctx.fillStyle = "rgba(0, 0, 0, 0.4)";
-                ctx.textAlign = "center";
-                ctx.font = "bold 30px 'Montserrat', sans-serif";
-                const placeholderX = FRAME_AREA.startX + FRAME_AREA.width / 2;
-                const placeholderY = FRAME_AREA.startY - FRAME_AREA.height / 2;
-                ctx.fillText("Area Foto Anda", placeholderX, placeholderY);
-                ctx.font = "20px 'Montserrat', sans-serif";
-                ctx.fillText("Unggah foto di bawah", placeholderX, placeholderY + 35);
-            }
-
-            // 4. Gambar teks nama dan keterangan
             ctx.fillStyle = TEXT_NAME.color;
             ctx.font = TEXT_NAME.font;
             ctx.textAlign = "left";
+            ctx.textBaseline = "top"; // Mengatur titik acuan vertikal ke atas teks
             ctx.fillText(inputName.value || TEXT_NAME.text, TEXT_NAME.x, TEXT_NAME.y, TEXT_NAME.maxWidth);
             
             ctx.fillStyle = TEXT_POSITION.color;
@@ -234,7 +220,6 @@
         photoUpload.addEventListener("change", (event) => {
             const file = event.target.files[0];
             if (file) {
-                fileNameDisplay.textContent = `File dipilih: ${file.name}`; // Memberi feedback nama file
                 const reader = new FileReader();
                 reader.onload = (e) => {
                     userPhoto = new Image();
@@ -254,7 +239,7 @@
         downloadBtn.addEventListener('click', () => {
             const link = document.createElement("a");
             link.href = twibbonCanvas.toDataURL("image/png");
-            link.download = "Twibbon_Muktamar_IKA_STIBA.png";
+            link.download = "Twibbon_Muktamar_IKA_STIBA_Hasil.png";
             document.body.appendChild(link);
             link.click();
             document.body.removeChild(link);
