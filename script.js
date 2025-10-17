@@ -167,7 +167,7 @@ async function downloadTwibbon() {
 
     let link = document.createElement("a");
     link.href = twibbonCanvas.toDataURL("image/png");
-    link.download = "Twibbon_Muktamar_IKA_STIBA.png";
+    link.download = "TWIBBON_MUKTAMAR_IKA.png";
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
