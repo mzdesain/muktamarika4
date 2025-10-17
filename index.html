@@ -1,189 +1,143 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Twibbon Muktamar IV IKA STIBA Makassar</title>
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap" rel="stylesheet">
-    
-    <style>
-        body {
-            font-family: 'Montserrat', sans-serif; text-align: center;
-            background-color: #f0f2f5; padding: 20px; color: #333;
-        }
-        .wrapper {
-            max-width: 500px; margin: auto; background: #fff;
-            padding: 25px; border-radius: 12px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-        }
-        h2 { color: #0d3d52; margin-bottom: 20px; }
-        .canvas-container {
-            width: 100%; max-width: 450px; margin: 0 auto 20px auto;
-            border: 1px solid #ddd; border-radius: 8px; overflow: hidden;
-            background-color: #fafafa;
-        }
-        #twibbonCanvas { width: 100%; height: auto; display: block; }
-        .input-section {
-            display: flex; flex-direction: column; gap: 15px; text-align: left;
-        }
-        .input-group label {
-            display: block; margin-bottom: 5px; font-weight: bold;
-            font-size: 14px; color: #555;
-        }
-        input[type="text"], input[type="file"] {
-            width: 100%; padding: 12px; border: 1px solid #ccc;
-            border-radius: 6px; font-size: 14px; box-sizing: border-box;
-        }
-        button {
-            padding: 14px; background-color: #018297; color: white;
-            border: none; border-radius: 6px; cursor: pointer;
-            font-size: 16px; font-weight: bold; margin-top: 10px;
-        }
-        button:disabled { background-color: #a0a0a0; cursor: not-allowed; }
-    </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Twibbon Muktamar IKA STIBA Makassar</title>
+  <style>
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: #f5f7fa;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+    }
+
+    .container {
+      display: flex;
+      align-items: center;
+      gap: 40px;
+      background: white;
+      padding: 30px 40px;
+      border-radius: 16px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    }
+
+    canvas {
+      border: 2px solid #ccc;
+      border-radius: 10px;
+    }
+
+    .controls {
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+      width: 300px;
+    }
+
+    input[type="text"], input[type="file"] {
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      font-size: 14px;
+    }
+
+    button {
+      padding: 10px;
+      border: none;
+      border-radius: 6px;
+      background: #0b6b4b;
+      color: white;
+      font-size: 15px;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+
+    button:hover {
+      background: #0a5a3f;
+    }
+
+    h2 {
+      margin-bottom: 5px;
+      color: #0b6b4b;
+    }
+  </style>
 </head>
 <body>
-    <div class="wrapper">
-        <h2>Twibbon Muktamar IV</h2>
-        <p>Unggah foto dan isi nama Anda, lalu unduh hasilnya.</p>
-        <div class="canvas-container"><canvas id="twibbonCanvas"></canvas></div>
-        <div class="input-section">
-            <div class="input-group">
-                <label for="photoUpload">1. Pilih Foto Terbaik Anda</label>
-                <input type="file" id="photoUpload" accept="image/*">
-            </div>
-            <div class="input-group">
-                <label for="inputName">2. Masukkan Nama Lengkap</label>
-                <input type="text" id="inputName" placeholder="Ketik nama Anda di sini">
-            </div>
-            <div class="input-group">
-                <label for="inputPosition">3. Masukkan Keterangan</label>
-                <input type="text" id="inputPosition" placeholder="Ketik keterangan di sini (mis: Alumni 2020)">
-            </div>
-            <button id="downloadBtn" disabled>Simpan ke Galeri</button>
-        </div>
+  <div class="container">
+    <canvas id="twibbonCanvas" width="1080" height="1350"></canvas>
+
+    <div class="controls">
+      <h2>Twibbon Muktamar IV</h2>
+      <input type="file" id="uploadPhoto" accept="image/*" />
+      <input type="text" id="nameInput" placeholder="Nama Anda" />
+      <input type="text" id="jobInput" placeholder="Jabatan / Instansi" />
+      <button id="downloadBtn">Unduh Twibbon</button>
     </div>
-    
-    <script>
-        const twibbonCanvas = document.getElementById("twibbonCanvas");
-        const ctx = twibbonCanvas.getContext("2d");
-        const photoUpload = document.getElementById("photoUpload");
-        const inputName = document.getElementById("inputName");
-        const inputPosition = document.getElementById("inputPosition");
-        const downloadBtn = document.getElementById("downloadBtn");
+  </div>
 
-        // PASTIKAN NAMA FILE INI SAMA PERSIS (termasuk huruf besar/kecil)
-        const baseImageSrc = 'TWIBBON MUKTAMAR.png'; 
-        const baseImage = new Image();
-        baseImage.crossOrigin = "anonymous";
-        baseImage.src = baseImageSrc;
-        let userPhoto = null;
+  <script>
+    const canvas = document.getElementById('twibbonCanvas');
+    const ctx = canvas.getContext('2d');
+    const uploadPhoto = document.getElementById('uploadPhoto');
+    const nameInput = document.getElementById('nameInput');
+    const jobInput = document.getElementById('jobInput');
+    const downloadBtn = document.getElementById('downloadBtn');
 
-        // Koordinat (berdasarkan gambar 1080x1350 piksel)
-        const FRAME_AREA = {
-            startX: 457, startY: 692, width: 395, height: 448,
-            curveControlX: 655, curveControlY: 150
-        };
-        const TEXT_NAME = {
-            text: "Nama Anda", x: 135, y: 530,
-            font: "bold 32px 'Montserrat', sans-serif", color: "white", maxWidth: 320
-        };
-        const TEXT_POSITION = {
-            text: "Keterangan Anda", x: 135, y: 565,
-            font: "26px 'Montserrat', sans-serif", color: "white", maxWidth: 320
-        };
+    const twibbon = new Image();
+    twibbon.src = 'TWIBBON MUKTAMAR.png'; // pastikan file ini ada di folder yang sama
 
-        async function drawTwibbon() {
-            // Menunggu gambar template benar-benar siap
-            if (!baseImage.complete || baseImage.naturalHeight === 0) {
-                await new Promise(resolve => baseImage.onload = resolve);
-            }
-            twibbonCanvas.width = baseImage.width;
-            twibbonCanvas.height = baseImage.height;
+    let uploadedImage = null;
 
-            // --- URUTAN MENGGAMBAR YANG DIPERBAIKI ---
+    function drawCanvas() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-            // LANGKAH 1: Selalu gambar template twibbon sebagai dasar.
-            ctx.drawImage(baseImage, 0, 0, twibbonCanvas.width, twibbonCanvas.height);
+      // gambar foto
+      if (uploadedImage) {
+        const ratio = Math.min(canvas.width / uploadedImage.width, canvas.height / uploadedImage.height);
+        const newWidth = uploadedImage.width * ratio;
+        const newHeight = uploadedImage.height * ratio;
+        const x = (canvas.width - newWidth) / 2;
+        const y = (canvas.height - newHeight) / 2;
+        ctx.drawImage(uploadedImage, x, y, newWidth, newHeight);
+      }
 
-            // LANGKAH 2: Jika ada foto, gambar di atas template di dalam bingkai.
-            if (userPhoto) {
-                ctx.save();
-                ctx.beginPath();
-                ctx.moveTo(FRAME_AREA.startX, FRAME_AREA.startY);
-                ctx.lineTo(FRAME_AREA.startX, FRAME_AREA.startY - FRAME_AREA.height + 50);
-                ctx.quadraticCurveTo(
-                    FRAME_AREA.curveControlX, FRAME_AREA.curveControlY,
-                    FRAME_AREA.startX + FRAME_AREA.width, FRAME_AREA.startY - FRAME_AREA.height + 50
-                );
-                ctx.lineTo(FRAME_AREA.startX + FRAME_AREA.width, FRAME_AREA.startY);
-                ctx.closePath();
-                ctx.clip();
+      // gambar twibbon di atas foto
+      ctx.drawImage(twibbon, 0, 0, canvas.width, canvas.height);
 
-                const photoAR = userPhoto.width / userPhoto.height;
-                const frameAR = FRAME_AREA.width / FRAME_AREA.height;
-                let sx = 0, sy = 0, sWidth = userPhoto.width, sHeight = userPhoto.height;
-                if (photoAR > frameAR) {
-                    sWidth = sHeight * frameAR; sx = (userPhoto.width - sWidth) / 2;
-                } else {
-                    sHeight = sWidth / frameAR; sy = (userPhoto.height - sHeight) / 2;
-                }
-                ctx.drawImage(userPhoto, sx, sy, sWidth, sHeight, FRAME_AREA.startX, FRAME_AREA.startY - FRAME_AREA.height, FRAME_AREA.width, FRAME_AREA.height);
-                ctx.restore();
-            }
+      // teks nama dan jabatan di samping bingkai (kanan bawah)
+      ctx.font = "bold 48px Poppins";
+      ctx.fillStyle = "#0b6b4b";
+      ctx.textAlign = "right";
+      ctx.fillText(nameInput.value, canvas.width - 50, canvas.height - 120);
 
-            // LANGKAH 3: Tulis teks sebagai lapisan paling atas.
-            await document.fonts.ready; // Penting: tunggu font siap
-            
-            ctx.textBaseline = "top"; // Mengatur acuan posisi Y
-            ctx.textAlign = "left";
-            
-            ctx.fillStyle = TEXT_NAME.color;
-            ctx.font = TEXT_NAME.font;
-            ctx.fillText(inputName.value || TEXT_NAME.text, TEXT_NAME.x, TEXT_NAME.y, TEXT_NAME.maxWidth);
-            
-            ctx.fillStyle = TEXT_POSITION.color;
-            ctx.font = TEXT_POSITION.font;
-            ctx.fillText(inputPosition.value || TEXT_POSITION.text, TEXT_POSITION.x, TEXT_POSITION.y, TEXT_POSITION.maxWidth);
-        }
+      ctx.font = "32px Poppins";
+      ctx.fillStyle = "#444";
+      ctx.fillText(jobInput.value, canvas.width - 50, canvas.height - 60);
+    }
 
-        function updateDownloadButtonState() {
-            const isReady = userPhoto && (inputName.value.trim() !== "" || inputPosition.value.trim() !== "");
-            downloadBtn.disabled = !isReady;
-        }
+    uploadPhoto.addEventListener('change', (e) => {
+      const file = e.target.files[0];
+      const reader = new FileReader();
+      reader.onload = function(event) {
+        uploadedImage = new Image();
+        uploadedImage.onload = drawCanvas;
+        uploadedImage.src = event.target.result;
+      };
+      reader.readAsDataURL(file);
+    });
 
-        photoUpload.addEventListener("change", (event) => {
-            const file = event.target.files[0];
-            if (file) {
-                const reader = new FileReader();
-                reader.onload = (e) => {
-                    userPhoto = new Image();
-                    userPhoto.onload = () => {
-                        drawTwibbon();
-                        updateDownloadButtonState();
-                    };
-                    userPhoto.src = e.target.result;
-                };
-                reader.readAsDataURL(file);
-            }
-        });
+    nameInput.addEventListener('input', drawCanvas);
+    jobInput.addEventListener('input', drawCanvas);
+    twibbon.onload = drawCanvas;
 
-        inputName.addEventListener('input', () => { drawTwibbon(); updateDownloadButtonState(); });
-        inputPosition.addEventListener('input', () => { drawTwibbon(); updateDownloadButtonState(); });
-
-        downloadBtn.addEventListener('click', () => {
-            const link = document.createElement("a");
-            link.href = twibbonCanvas.toDataURL("image/png");
-            link.download = "Twibbon_Muktamar_Hasil.png";
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
-        });
-
-        baseImage.onload = () => { drawTwibbon(); };
-        baseImage.onerror = () => {
-            alert(`GAGAL MEMUAT GAMBAR DASAR: "${baseImageSrc}". Pastikan nama file sudah benar dan berada di folder yang sama.`);
-        };
-    </script>
+    downloadBtn.addEventListener('click', () => {
+      const link = document.createElement('a');
+      link.download = 'Twibbon-Muktamar-IV.png';
+      link.href = canvas.toDataURL('image/png');
+      link.click();
+    });
+  </script>
 </body>
 </html>
