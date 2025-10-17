@@ -1,0 +1,113 @@
+body {
+    font-family: 'Montserrat', sans-serif;
+    text-align: center;
+    background-color: #f8f9fa;
+    padding: 20px;
+}
+
+.wrapper {
+    max-width: 100%;
+    margin: auto;
+    background: #fff;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+.container {
+    position: relative;
+    display: inline-block;
+    width: 100%;
+    max-width: 500px; /* Lebar maksimum container untuk twibbon */
+    aspect-ratio: 9 / 16; /* Rasio aspek gambar asli Anda */
+    overflow: hidden; /* Pastikan tidak ada yang meluap */
+}
+
+#twibbonCanvas {
+    width: 100%;
+    height: 100%;
+    display: block; /* Menghilangkan margin bawah default pada inline element */
+}
+
+.text-info {
+    position: absolute;
+    /* Posisikan di kanan bingkai yang diinginkan */
+    right: 5%; /* Sesuaikan sesuai kebutuhan, dari sisi kanan container */
+    top: 55%; /* Sesuaikan sesuai kebutuhan, dari atas container */
+    transform: translateY(-50%); /* Agar rata tengah secara vertikal */
+    width: 30%; /* Lebar area teks */
+    text-align: right; /* Teks rata kanan */
+    color: #fff; /* Warna teks, sesuai latar belakang bingkai asli */
+    line-height: 1.2;
+    z-index: 10; /* Pastikan teks di atas canvas */
+    pointer-events: none; /* Agar tidak mengganggu interaksi dengan elemen di bawahnya */
+}
+
+.name {
+    font-weight: bold;
+    font-size: 0.9em; /* Ukuran font relatif */
+    color: #018297; /* Warna teks yang jelas di atas latar */
+    text-shadow: 1px 1px 2px rgba(0,0,0,0.5); /* Beri sedikit bayangan agar lebih terbaca */
+}
+
+.position {
+    font-size: 0.7em; /* Ukuran font relatif */
+    color: #018297; /* Warna teks yang jelas di atas latar */
+    text-shadow: 1px 1px 2px rgba(0,0,0,0.5); /* Beri sedikit bayangan agar lebih terbaca */
+}
+
+
+.input-section {
+    margin-top: 15px;
+    padding: 0 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.input-section input,
+.input-section button {
+    width: 100%;
+    box-sizing: border-box;
+}
+
+input[type="text"],
+input[type="file"] {
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 14px;
+}
+
+button {
+    padding: 10px;
+    background-color: #018297;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+button:disabled {
+    background-color: #ccc;
+    cursor: not-allowed;
+}
+
+/* Responsif untuk layar kecil */
+@media (max-width: 480px) {
+    .wrapper {
+        padding: 15px;
+    }
+    .text-info {
+        right: 3%; /* Sedikit lebih ke kanan di layar kecil */
+        top: 55%;
+        width: 35%; /* Beri sedikit lebih banyak ruang */
+    }
+    .name {
+        font-size: 0.8em;
+    }
+    .position {
+        font-size: 0.6em;
+    }
+}
