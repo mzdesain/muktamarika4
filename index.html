@@ -108,15 +108,15 @@
 
       // ======== POSISI NAMA DAN JABATAN (SEDIKIT NAIK) ========
       const textX = 120;     // jarak dari kiri
-      const nameY = 1000;    // posisi vertikal nama (dinaikkan)
+      const nameY = 1010;    // posisi vertikal nama (dinaikkan)
       const jobY = 1050;     // posisi vertikal jabatan (dinaikkan)
 
       ctx.textAlign = "left";
       ctx.fillStyle = "#ffffff"; // warna putih biar kontras
-      ctx.font = "bold 48px Poppins";
+      ctx.font = "bold 28px Poppins";
       ctx.fillText(nameInput.value, textX, nameY);
 
-      ctx.font = "32px Poppins";
+      ctx.font = "22px Poppins";
       ctx.fillText(jobInput.value, textX, jobY);
     }
 
