@@ -106,15 +106,19 @@
       // gambar twibbon di atas foto
       ctx.drawImage(twibbon, 0, 0, canvas.width, canvas.height);
 
-      // teks nama dan jabatan di samping bingkai (kanan bawah)
+      // ======== POSISI NAMA DAN JABATAN DI BAWAH AREA WAKTU ========
+      // kira-kira koordinat sekitar kiri bawah twibbon
+      const textX = 120;     // jarak dari kiri
+      const nameY = 1220;    // posisi vertikal nama
+      const jobY = 1280;     // posisi vertikal jabatan
+
+      ctx.textAlign = "left";
+      ctx.fillStyle = "#ffffff"; // warna putih biar kontras
       ctx.font = "bold 48px Poppins";
-      ctx.fillStyle = "#0b6b4b";
-      ctx.textAlign = "right";
-      ctx.fillText(nameInput.value, canvas.width - 50, canvas.height - 120);
+      ctx.fillText(nameInput.value, textX, nameY);
 
       ctx.font = "32px Poppins";
-      ctx.fillStyle = "#444";
-      ctx.fillText(jobInput.value, canvas.width - 50, canvas.height - 60);
+      ctx.fillText(jobInput.value, textX, jobY);
     }
 
     uploadPhoto.addEventListener('change', (e) => {
