@@ -10,7 +10,7 @@ const positionPreview = document.getElementById("position");
 
 let baseImage = new Image();
 baseImage.crossOrigin = "anonymous";
-baseImage.src = "muktamar.jpg"; // Ganti dengan path gambar twibbon Anda
+baseImage.src = "TWIBBON MUKTAMAR.png"; // Ganti dengan path gambar twibbon Anda
 let userPhoto = null;
 
 // Koordinat dan ukuran bingkai di gambar latar (sesuaikan ini!)
