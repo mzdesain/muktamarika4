@@ -106,11 +106,10 @@
       // gambar twibbon di atas foto
       ctx.drawImage(twibbon, 0, 0, canvas.width, canvas.height);
 
-      // ======== POSISI NAMA DAN JABATAN DI BAWAH AREA WAKTU ========
-      // kira-kira koordinat sekitar kiri bawah twibbon
+      // ======== POSISI NAMA DAN JABATAN (SEDIKIT NAIK) ========
       const textX = 120;     // jarak dari kiri
-      const nameY = 1220;    // posisi vertikal nama
-      const jobY = 1280;     // posisi vertikal jabatan
+      const nameY = 1160;    // posisi vertikal nama (dinaikkan)
+      const jobY = 1210;     // posisi vertikal jabatan (dinaikkan)
 
       ctx.textAlign = "left";
       ctx.fillStyle = "#ffffff"; // warna putih biar kontras
